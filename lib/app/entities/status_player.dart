@@ -1,0 +1,1 @@
+enum PlayerStatus { pause, winner, loser, draw }
