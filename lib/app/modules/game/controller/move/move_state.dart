@@ -1,32 +1,32 @@
 part of 'move_controller.dart';
 
-enum MoveStatus { initial, gamePoint, gameFinish, failure }
+enum MoveStatus { initial, winner,winnerGame, draw, reset }
 
 class MoveState extends Equatable {
   final MoveStatus status;
-  final String vencedorSet;
-  final String vencedorGame;
+  final String winner;
+  final String message;
 
   const MoveState._({
     required this.status,
-    required this.vencedorSet,
-    required this.vencedorGame
+    required this.winner,
+    required this.message
   });
 
-  const MoveState.initial() : this._(status: MoveStatus.initial,vencedorSet: '',vencedorGame:'');
+  const MoveState.initial() : this._(status: MoveStatus.initial,winner: '',message:'');
   
   @override
-  List<Object?> get props => [status, vencedorSet,vencedorGame]; //Quais atribuitos serão "escutáveis"  
+  List<Object?> get props => [status, winner]; //Quais atribuitos serão "escutáveis"  
 
   MoveState copyWith({
     MoveStatus? status,
-    String? vencedorSet,
-    String? vencedorGame,
+    String? winner,
+    String? message,
   }) {
     return MoveState._(
       status: status ?? this.status,
-      vencedorSet: vencedorSet ?? this.vencedorSet,
-      vencedorGame: vencedorGame ?? this.vencedorGame,
+      winner: winner ?? this.winner,
+      message: message ?? this.message,
     );
   }
 }

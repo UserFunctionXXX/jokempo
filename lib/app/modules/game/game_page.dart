@@ -1,5 +1,6 @@
 import 'dart:ui';
 
+import 'package:asuka/snackbars/asuka_snack_bar.dart';
 import 'package:blur/blur.dart';
 import 'package:flutter/material.dart';
 import 'package:jokempo/app/modules/game/controller/move/move_controller.dart';
@@ -28,93 +29,107 @@ class GamePage extends StatefulWidget {
 class _GamePageState extends State<GamePage> {
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('Jokempo'),
-        centerTitle: true,
-      ),
-      body: SafeArea(
-        child: Center(
-          child: Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                const Padding(
-                  padding: EdgeInsets.fromLTRB(8, 20, 8, 8),
-                  child: Center(
-                    child: Text('Pedra, papel e tesoura'),
+    return BlocListener<MoveStatusController, MoveState>(
+      bloc: widget.controller,
+      listener: (context, state) {
+        if(state.status == MoveStatus.winner){
+          AsukaSnackbar.success(state.message).show();
+        }
+        if(state.status == MoveStatus.draw){
+          AsukaSnackbar.info(state.message).show();
+        }
+        if(state.status == MoveStatus.winnerGame){
+          AsukaSnackbar.info(state.message).show();
+        }
+      },
+      child: Scaffold(
+        appBar: AppBar(
+          title: Text('Jokempo'),
+          centerTitle: true,
+        ),
+        body: SafeArea(
+          child: Center(
+            child: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  const Padding(
+                    padding: EdgeInsets.fromLTRB(8, 20, 8, 8),
+                    child: Center(
+                      child: Text('Pedra, papel e tesoura'),
+                    ),
                   ),
-                ),
-                Column(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceAround,
-                      children: [
-                        BlocBuilder<Player1StatusController, Player1State>(
-                          bloc: widget.controllerPlayer1,
-                          builder: (context, state) {
-                            print(state.status);
-                            return PlayerWidget(
-                                status: state.status,
-                                life: state.life,
-                                player: '1');
-                          },
-                        ),
-                        BlocBuilder<Player2StatusController, Player2State>(
-                          bloc: widget.controllerPlayer2,
-                          builder: (context, state) {
-                            print(state.status);
-                            return PlayerWidget(
-                                status: state.status,
-                                life: state.life,
-                                player: '2');
-                          },
-                        ),
-                      ],
-                    ),
-                    const Padding(
-                      padding: EdgeInsets.all(8.0),
-                      child: Text('Escolha sua jogada'),
-                    ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceAround,
-                      children: [
-                        SelectMove(
-                          height: 210,
-                          moveStatusController: widget.controller,
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: [
-                    SizedBox(
-                      width: 150,
-                      height: 50,
-                      child: ElevatedButton(
-                        onPressed: () {
-                          widget.controller.registerMove();
-                        },
-                        child: const Text('Jogar'),
+                  Column(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceAround,
+                        children: [
+                          BlocBuilder<Player1StatusController, Player1State>(
+                            bloc: widget.controllerPlayer1,
+                            builder: (context, state) {
+                              print(state.status);
+                              return PlayerWidget(
+                                  status: state.status,
+                                  life: state.life,
+                                  player: '1');
+                            },
+                          ),
+                          BlocBuilder<Player2StatusController, Player2State>(
+                            bloc: widget.controllerPlayer2,
+                            builder: (context, state) {
+                              print(state.status);
+                              return PlayerWidget(
+                                  status: state.status,
+                                  life: state.life,
+                                  player: '2');
+                            },
+                          ),
+                        ],
                       ),
-                    ),
-                    SizedBox(
-                      width: 150,
-                      height: 50,
-                      child: ElevatedButton(
-                        onPressed: () {
-                          widget.controller.reset();
-                        },
-                        child: const Text('Resetar'),
+                      const Padding(
+                        padding: EdgeInsets.all(8.0),
+                        child: Text('Escolha sua jogada'),
                       ),
-                    ),
-                  ],
-                )
-              ],
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceAround,
+                        children: [
+                          SelectMove(
+                            height: 210,
+                            moveStatusController: widget.controller,
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      SizedBox(
+                        width: 150,
+                        height: 50,
+                        child: ElevatedButton(
+                          onPressed: () {
+                            widget.controller.registerMove();
+                          },
+                          child: const Text('Jogar'),
+                        ),
+                      ),
+                      SizedBox(
+                        width: 150,
+                        height: 50,
+                        child: ElevatedButton(
+                          onPressed: () {
+                            widget.controller.reset();
+                          },
+                          child: const Text('Resetar'),
+                        ),
+                      ),
+                    ],
+                  )
+                ],
+              ),
             ),
           ),
         ),

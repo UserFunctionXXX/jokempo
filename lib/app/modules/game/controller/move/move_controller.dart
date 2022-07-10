@@ -11,6 +11,7 @@ class MoveStatusController extends Cubit<MoveState> {
   final Player1StatusController _player1statusController;
   final Player2StatusController _player2statusController;
   String moveSelected = 'pedra';
+  List<int>pointsPLayers = [0,0];
 
   MoveStatusController(
       {required MoveCalculator moveCalculator,
@@ -26,26 +27,41 @@ class MoveStatusController extends Cubit<MoveState> {
     final playerWinner = _moveCalculator.registerMove(moveSelected, moveCPU);
 
     if (playerWinner == "player1") {
+      pointsPLayers[0]++;
       _player1statusController.winner();
       _player2statusController.loser();
+      emit(state.copyWith(status: MoveStatus.reset));
+      emit(state.copyWith(status: MoveStatus.winner,winner: 'player1',message: 'Player 1 venceu a rodada'));
     } else if (playerWinner == "player2") {
+      pointsPLayers[1]++;
       _player1statusController.loser();
       _player2statusController.winner();
-    } else if(playerWinner == "draw"){
+      emit(state.copyWith(status: MoveStatus.reset));
+      emit(state.copyWith(status: MoveStatus.winner,winner: 'player2',message: 'Player 2 venceu a rodada'));
+    } else if (playerWinner == "draw") {
       _player1statusController.draw();
       _player2statusController.draw();
+      emit(state.copyWith(status: MoveStatus.reset));
+      emit(state.copyWith(status: MoveStatus.draw,message: 'Empate. Joguem novamente'));
     }
 
-    emit(state.copyWith(
-        status: MoveStatus.gamePoint, vencedorSet: playerWinner));
+    if (pointsPLayers[0] >= 20 || pointsPLayers[1] >=20 ){
+
+      emit(state.copyWith(status: MoveStatus.reset));      
+      if (pointsPLayers[0] >= 20){
+         emit(state.copyWith(status: MoveStatus.winnerGame,winner: 'player1',message: 'O grande vencedor do game foi o Player 1'));
+      }else{
+        emit(state.copyWith(status: MoveStatus.winnerGame,winner: 'player2',message: 'O grande vencedor do game foi o Player 2'));
+      }
+      
+      _player1statusController.reset();
+      _player2statusController.reset();
+    }
   }
 
   void reset() {
     _player1statusController.reset();
     _player2statusController.reset();
-    emit(state.copyWith(
-        status: MoveStatus.initial, vencedorSet: "", vencedorGame: ""));
+    emit(state.copyWith(status: MoveStatus.initial, winner: ""));
   }
-
-
 }
