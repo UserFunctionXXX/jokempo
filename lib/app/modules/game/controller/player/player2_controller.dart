@@ -4,7 +4,7 @@ import 'package:jokempo/app/entities/status_player.dart';
 part 'player2_state.dart';
 
 class Player2StatusController extends Cubit<Player2State> {
-  int life = 0;
+  int life = 20;
   Player2StatusController() : super(const Player2State.initial());
 
   void reset() {
